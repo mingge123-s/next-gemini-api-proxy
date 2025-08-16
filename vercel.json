@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "regions": ["iad1", "cle1", "pdx1"],
   "functions": {
     "app/api/**/*.ts": {
       "maxDuration": 30
