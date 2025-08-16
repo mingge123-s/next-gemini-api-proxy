@@ -28,8 +28,8 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
           {mode === 'signin'
-            ? 'Sign in to your account'
-            : 'Create your account'}
+            ? '登录管理员账户'
+            : '创建管理员账户'}
         </h2>
       </div>
 
@@ -38,34 +38,14 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
           <input type="hidden" name="redirect" value={redirect || ''} />
           <input type="hidden" name="priceId" value={priceId || ''} />
           <input type="hidden" name="inviteId" value={inviteId || ''} />
-          <div>
-            <Label
-              htmlFor="email"
-              className="block text-sm font-medium text-foreground"
-            >
-              Email
-            </Label>
-            <div className="mt-1">
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                defaultValue={state.email}
-                required
-                maxLength={50}
-                className="rounded-full"
-                placeholder="Enter your email"
-              />
-            </div>
-          </div>
+
 
           <div>
             <Label
               htmlFor="password"
               className="block text-sm font-medium text-foreground"
             >
-              Password
+              管理员密码
             </Label>
             <div className="mt-1">
               <Input
@@ -80,7 +60,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                 minLength={8}
                 maxLength={100}
                 className="rounded-full"
-                placeholder="Enter your password"
+                placeholder="请输入管理员密码"
               />
             </div>
           </div>
@@ -98,12 +78,12 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
               {pending ? (
                 <>
                   <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                  Loading...
+                  登录中...
                 </>
               ) : mode === 'signin' ? (
-                'Sign in'
+                '登录'
               ) : (
-                'Sign up'
+                '创建账户'
               )}
             </Button>
           </div>
@@ -117,8 +97,8 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-background text-muted-foreground">
                 {mode === 'signin'
-                  ? 'New to our platform?'
-                  : 'Already have an account?'}
+                  ? '需要创建账户吗？'
+                  : '已有账户？'}
               </span>
             </div>
           </div>
@@ -131,8 +111,8 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
               className="w-full flex justify-center py-2 px-4 border border-input rounded-full shadow-sm text-sm font-medium text-foreground bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
             >
               {mode === 'signin'
-                ? 'Create an account'
-                : 'Sign in to existing account'}
+                ? '创建管理员账户'
+                : '登录已有账户'}
             </Link>
           </div>
         </div>

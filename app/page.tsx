@@ -1,29 +1,39 @@
+'use client';
+
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
 
 export default function HomePage() {
-  const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+  const [baseUrl, setBaseUrl] = useState('https://your-domain.vercel.app');
+  
+  useEffect(() => {
+    // Auto-detect current domain
+    if (typeof window !== 'undefined') {
+      setBaseUrl(`${window.location.protocol}//${window.location.host}`);
+    }
+  }, []);
   
   return (
     <div className="container mx-auto px-4 py-16">
       <div className="text-center max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-6">
-          Gemini API Proxy
+          Gemini API 代理服务
         </h1>
         <p className="text-lg text-gray-600 mb-8">
-          A Next.js-based proxy server for Google's Gemini API with OpenAI compatibility, 
-          rate limiting, caching, and advanced features for production deployment on Vercel.
+          基于 Next.js 的 Google Gemini API 代理服务，具有 OpenAI 兼容性、
+          请求限制、缓存和高级功能，适用于 Vercel 生产环境部署。
         </p>
         <div className="flex gap-4 justify-center mb-12">
           <Link href="/admin">
             <Button size="lg">
-              Admin Dashboard
+              管理仪表板
             </Button>
           </Link>
           <Link href="#api-usage">
             <Button variant="outline" size="lg">
-              API Documentation
+              API 文档
             </Button>
           </Link>
         </div>
@@ -38,12 +48,12 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <CardTitle>OpenAI Compatible</CardTitle>
+            <CardTitle>OpenAI 兼容</CardTitle>
           </CardHeader>
           <CardContent>
             <CardDescription>
-              Drop-in replacement for OpenAI API with /v1/models and /v1/chat/completions endpoints.
-              Supports streaming and non-streaming responses.
+              完全兼容 OpenAI API，支持 /v1/models 和 /v1/chat/completions 端点。
+              支持流式和非流式响应。
             </CardDescription>
           </CardContent>
         </Card>
@@ -55,12 +65,12 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <CardTitle>Advanced Features</CardTitle>
+            <CardTitle>高级功能</CardTitle>
           </CardHeader>
           <CardContent>
             <CardDescription>
-              API key rotation, rate limiting, concurrent requests, caching, fake streaming,
-              and anti-detection disguise functionality.
+              API 密钥轮换、请求限制、并发请求、缓存、虚拟流式传输和
+              反检测伪装功能。
             </CardDescription>
           </CardContent>
         </Card>
@@ -72,12 +82,12 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
               </svg>
             </div>
-            <CardTitle>Vercel Ready</CardTitle>
+            <CardTitle>Vercel 优化</CardTitle>
           </CardHeader>
           <CardContent>
             <CardDescription>
-              Optimized for serverless deployment on Vercel with edge functions
-              and automatic scaling capabilities.
+              专为 Vercel 无服务器部署优化，支持边缘函数和
+              自动扩展功能。
             </CardDescription>
           </CardContent>
         </Card>
@@ -87,13 +97,13 @@ export default function HomePage() {
       <div id="api-usage" className="mt-16">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">API Usage</CardTitle>
-            <CardDescription>How to use the Gemini API proxy with OpenAI-compatible endpoints</CardDescription>
+            <CardTitle className="text-2xl">API 使用</CardTitle>
+            <CardDescription>如何使用 Gemini API 代理服务的 OpenAI 兼容端点</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Models Endpoint */}
             <div>
-              <h3 className="text-lg font-semibold mb-2">List Available Models</h3>
+              <h3 className="text-lg font-semibold mb-2">获取可用模型列表</h3>
               <div className="bg-gray-100 p-4 rounded-lg">
                 <code className="text-sm">
                   GET {baseUrl}/api/v1/models
@@ -103,7 +113,7 @@ export default function HomePage() {
 
             {/* Chat Completions */}
             <div>
-              <h3 className="text-lg font-semibold mb-2">Chat Completions</h3>
+              <h3 className="text-lg font-semibold mb-2">聊天完成</h3>
               <div className="bg-gray-100 p-4 rounded-lg">
                 <code className="text-sm whitespace-pre-wrap">
 {`POST ${baseUrl}/api/v1/chat/completions
@@ -126,10 +136,10 @@ Authorization: Bearer YOUR_PASSWORD
 
             {/* Available Models */}
             <div>
-              <h3 className="text-lg font-semibold mb-2">Available Models</h3>
+              <h3 className="text-lg font-semibold mb-2">可用模型</h3>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-medium mb-2">Standard Models:</h4>
+                  <h4 className="font-medium mb-2">标准模型：</h4>
                   <ul className="text-sm space-y-1 text-gray-600">
                     <li>• gemini-2.5-pro</li>
                     <li>• gemini-2.5-flash</li>
@@ -138,7 +148,7 @@ Authorization: Bearer YOUR_PASSWORD
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">Search-Enabled Models:</h4>
+                  <h4 className="font-medium mb-2">搬索增强模型：</h4>
                   <ul className="text-sm space-y-1 text-gray-600">
                     <li>• gemini-2.5-pro-search</li>
                     <li>• gemini-2.5-flash-search</li>

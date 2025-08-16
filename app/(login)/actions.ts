@@ -36,38 +36,45 @@ async function logActivity(
 }
 
 const signInSchema = z.object({
-  email: z.string().email().min(3).max(255),
   password: z.string().min(8).max(100)
 });
 
 export const signIn = validatedAction(signInSchema, async (data, formData) => {
-  const { email, password } = data;
+  const { password } = data;
 
-  const foundUser = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+  // Check against environment variable PASSWORD first
+  const envPassword = process.env.PASSWORD;
+  if (envPassword && password === envPassword) {
+    // Create a temporary admin user for session
+    const adminUser = {
+      id: 1,
+      email: 'admin@system',
+      name: 'Administrator',
+      passwordHash: '',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    await setSession(adminUser);
+    redirect('/');
+    return;
+  }
 
-  if (foundUser.length === 0) {
+  // If no env password, check database users
+  const foundUsers = await db.select().from(users).limit(1);
+  
+  if (foundUsers.length === 0) {
     return {
-      error: 'Invalid email or password. Please try again.',
-      email,
+      error: '密码错误，请重试。',
       password
     };
   }
 
-  const user = foundUser[0];
-
-  const isPasswordValid = await comparePasswords(
-    password,
-    user.passwordHash
-  );
+  const user = foundUsers[0];
+  const isPasswordValid = await comparePasswords(password, user.passwordHash);
 
   if (!isPasswordValid) {
     return {
-      error: 'Invalid email or password. Please try again.',
-      email,
+      error: '密码错误，请重试。',
       password
     };
   }
@@ -81,23 +88,18 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
 });
 
 const signUpSchema = z.object({
-  email: z.string().email(),
   password: z.string().min(8)
 });
 
 export const signUp = validatedAction(signUpSchema, async (data, formData) => {
-  const { email, password } = data;
+  const { password } = data;
 
-  const existingUser = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+  // Check if admin already exists
+  const existingUser = await db.select().from(users).limit(1);
 
   if (existingUser.length > 0) {
     return {
-      error: 'Failed to create user. Please try again.',
-      email,
+      error: '管理员账户已存在，请直接登录。',
       password
     };
   }
@@ -105,17 +107,16 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   const passwordHash = await hashPassword(password);
 
   const newUser: NewUser = {
-    email,
+    email: 'admin@system',
     passwordHash,
-    name: null
+    name: 'Administrator'
   };
 
   const [createdUser] = await db.insert(users).values(newUser).returning();
 
   if (!createdUser) {
     return {
-      error: 'Failed to create user. Please try again.',
-      email,
+      error: '创建管理员账户失败，请重试。',
       password
     };
   }

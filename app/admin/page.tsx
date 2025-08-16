@@ -65,7 +65,7 @@ export default function AdminPage() {
 
   const fetchStatus = async () => {
     if (!apiKey) {
-      setError('Please enter admin API key');
+      setError('请输入管理员密码');
       return;
     }
 
@@ -97,7 +97,7 @@ export default function AdminPage() {
 
   const manageKeys = async (action: string) => {
     if (!apiKey) {
-      setError('Please enter admin API key');
+      setError('请输入管理员密码');
       return;
     }
 
@@ -149,7 +149,7 @@ export default function AdminPage() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Gemini API Proxy Admin</h1>
+        <h1 className="text-3xl font-bold">Gemini API 代理管理</h1>
         <div className="text-sm text-gray-500">
           {status?.timestamp && new Date(status.timestamp).toLocaleString()}
         </div>
@@ -158,22 +158,22 @@ export default function AdminPage() {
       {/* API Key Input */}
       <Card>
         <CardHeader>
-          <CardTitle>Admin Authentication</CardTitle>
-          <CardDescription>Enter your admin API key to access management features</CardDescription>
+          <CardTitle>管理员身份验证</CardTitle>
+          <CardDescription>输入管理员密码访问管理功能</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="apiKey">Admin API Key</Label>
+            <Label htmlFor="apiKey">管理员密码</Label>
             <Input
               id="apiKey"
               type="password"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Enter admin API key"
+              placeholder="输入管理员密码"
             />
           </div>
           <Button onClick={fetchStatus} disabled={loading || !apiKey}>
-            {loading ? 'Loading...' : 'Refresh Status'}
+            {loading ? '加载中...' : '刷新状态'}
           </Button>
         </CardContent>
       </Card>
@@ -197,26 +197,26 @@ export default function AdminPage() {
           {/* Environment Configuration */}
           <Card>
             <CardHeader>
-              <CardTitle>Environment Configuration</CardTitle>
-              <CardDescription>Current system settings</CardDescription>
+              <CardTitle>环境配置</CardTitle>
+              <CardDescription>当前系统设置</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <strong>Rate Limiting:</strong>
+                  <strong>请求限制：</strong>
                   <ul className="text-sm space-y-1 mt-1">
-                    <li>Max requests/minute: {status.environment.maxRequestsPerMinute}</li>
-                    <li>Max requests/day/IP: {status.environment.maxRequestsPerDayPerIP}</li>
+                    <li>每分钟最大请求数: {status.environment.maxRequestsPerMinute}</li>
+                    <li>每 IP 每日最大请求数: {status.environment.maxRequestsPerDayPerIP}</li>
                   </ul>
                 </div>
                 <div>
-                  <strong>Features:</strong>
+                  <strong>功能特性：</strong>
                   <ul className="text-sm space-y-1 mt-1">
-                    <li>Fake Streaming: {status.environment.enableFakeStreaming ? '✅' : '❌'}</li>
-                    <li>Concurrent Requests: {status.environment.enableConcurrentRequests ? '✅' : '❌'} ({status.environment.concurrentRequests})</li>
-                    <li>Disguise Info: {status.environment.enableDisguiseInfo ? '✅' : '❌'}</li>
-                    <li>Search Mode: {status.environment.enableSearchMode ? '✅' : '❌'}</li>
-                    <li>Cache: {status.environment.enableCache ? '✅' : '❌'}</li>
+                    <li>虚拟流式传输: {status.environment.enableFakeStreaming ? '✅' : '❌'}</li>
+                    <li>并发请求: {status.environment.enableConcurrentRequests ? '✅' : '❌'} ({status.environment.concurrentRequests})</li>
+                    <li>伪装信息: {status.environment.enableDisguiseInfo ? '✅' : '❌'}</li>
+                    <li>搜索模式: {status.environment.enableSearchMode ? '✅' : '❌'}</li>
+                    <li>缓存: {status.environment.enableCache ? '✅' : '❌'}</li>
                   </ul>
                 </div>
               </div>
@@ -226,41 +226,41 @@ export default function AdminPage() {
           {/* API Keys Status */}
           <Card>
             <CardHeader>
-              <CardTitle>API Keys Status</CardTitle>
-              <CardDescription>Gemini API keys management</CardDescription>
+              <CardTitle>API 密钥状态</CardTitle>
+              <CardDescription>Gemini API 密钥管理</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">{status.apiKeys.valid}</div>
-                  <div className="text-sm text-gray-500">Valid Keys</div>
+                  <div className="text-sm text-gray-500">有效密钥</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-red-600">{status.apiKeys.invalid}</div>
-                  <div className="text-sm text-gray-500">Invalid Keys</div>
+                  <div className="text-sm text-gray-500">无效密钥</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-600">{status.apiKeys.total}</div>
-                  <div className="text-sm text-gray-500">Total Keys</div>
+                  <div className="text-sm text-gray-500">总密钥数</div>
                 </div>
               </div>
               
               <div className="flex space-x-2">
                 <Button onClick={() => manageKeys('validate')} disabled={loading}>
-                  Validate All Keys
+                  验证所有密钥
                 </Button>
                 <Button onClick={() => manageKeys('removeInvalid')} disabled={loading} variant="destructive">
-                  Remove Invalid Keys
+                  删除无效密钥
                 </Button>
                 <Button onClick={() => manageKeys('getValid')} disabled={loading} variant="outline">
-                  Show Valid Keys
+                  显示有效密钥
                 </Button>
               </div>
 
               {/* Key Details */}
               {status.apiKeys.keys.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="font-semibold">Key Details:</h4>
+                  <h4 className="font-semibold">密钥详情：</h4>
                   <div className="space-y-1 max-h-40 overflow-y-auto">
                     {status.apiKeys.keys.map((key, index) => (
                       <div key={index} className={`p-2 rounded text-sm border ${ 
@@ -269,12 +269,12 @@ export default function AdminPage() {
                         <div className="flex justify-between items-center">
                           <span className="font-mono">{key.key}</span>
                           <span className={key.isValid ? 'text-green-600' : 'text-red-600'}>
-                            {key.isValid ? '✅ Valid' : '❌ Invalid'}
+                            {key.isValid ? '✅ 有效' : '❌ 无效'}
                           </span>
                         </div>
                         {key.errorCount > 0 && (
                           <div className="text-xs text-gray-600 mt-1">
-                            Errors: {key.errorCount} | Last Error: {key.lastError}
+                            错误数: {key.errorCount} | 最后错误: {key.lastError}
                           </div>
                         )}
                       </div>
@@ -288,24 +288,24 @@ export default function AdminPage() {
           {/* Rate Limiting Stats */}
           <Card>
             <CardHeader>
-              <CardTitle>Rate Limiting Statistics</CardTitle>
-              <CardDescription>Current rate limiting status</CardDescription>
+              <CardTitle>请求限制统计</CardTitle>
+              <CardDescription>当前请求限制状态</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <strong>Cache Statistics:</strong>
+                  <strong>缓存统计：</strong>
                   <ul className="text-sm space-y-1 mt-1">
-                    <li>Total Keys: {status.rateLimit.totalKeys}</li>
-                    <li>Minute Keys: {status.rateLimit.minuteKeys}</li>
-                    <li>Day Keys: {status.rateLimit.dayKeys}</li>
+                    <li>总缓存键: {status.rateLimit.totalKeys}</li>
+                    <li>分钟缓存键: {status.rateLimit.minuteKeys}</li>
+                    <li>日缓存键: {status.rateLimit.dayKeys}</li>
                   </ul>
                 </div>
                 <div>
-                  <strong>Hit Statistics:</strong>
+                  <strong>命中统计：</strong>
                   <ul className="text-sm space-y-1 mt-1">
-                    <li>Cache Hits: {status.rateLimit.cacheHits}</li>
-                    <li>Cache Misses: {status.rateLimit.cacheMisses}</li>
+                    <li>缓存命中: {status.rateLimit.cacheHits}</li>
+                    <li>缓存未命中: {status.rateLimit.cacheMisses}</li>
                   </ul>
                 </div>
               </div>
@@ -315,25 +315,25 @@ export default function AdminPage() {
           {/* Cache Statistics */}
           <Card>
             <CardHeader>
-              <CardTitle>Response Cache Statistics</CardTitle>
-              <CardDescription>Concurrent requests and caching performance</CardDescription>
+              <CardTitle>响应缓存统计</CardTitle>
+              <CardDescription>并发请求和缓存性能</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <strong>Cache Performance:</strong>
+                  <strong>缓存性能：</strong>
                   <ul className="text-sm space-y-1 mt-1">
-                    <li>Total Keys: {status.cache.totalKeys}</li>
-                    <li>Variant Keys: {status.cache.variantKeys}</li>
-                    <li>Hit Rate: {(status.cache.hitRate * 100).toFixed(1)}%</li>
+                    <li>总缓存键: {status.cache.totalKeys}</li>
+                    <li>变体缓存键: {status.cache.variantKeys}</li>
+                    <li>命中率: {(status.cache.hitRate * 100).toFixed(1)}%</li>
                   </ul>
                 </div>
                 <div>
-                  <strong>Settings:</strong>
+                  <strong>设置：</strong>
                   <ul className="text-sm space-y-1 mt-1">
-                    <li>Concurrent Requests: {status.cache.settings.concurrentRequests}</li>
-                    <li>Concurrent Enabled: {status.cache.settings.enableConcurrent ? '✅' : '❌'}</li>
-                    <li>Cache Enabled: {status.cache.settings.enableCache ? '✅' : '❌'}</li>
+                    <li>并发请求数: {status.cache.settings.concurrentRequests}</li>
+                    <li>并发已启用: {status.cache.settings.enableConcurrent ? '✅' : '❌'}</li>
+                    <li>缓存已启用: {status.cache.settings.enableCache ? '✅' : '❌'}</li>
                   </ul>
                 </div>
               </div>
@@ -343,22 +343,22 @@ export default function AdminPage() {
           {/* Disguise Statistics */}
           <Card>
             <CardHeader>
-              <CardTitle>Disguise Information</CardTitle>
-              <CardDescription>Anti-detection features</CardDescription>
+              <CardTitle>伪装信息</CardTitle>
+              <CardDescription>反检测功能</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <strong>Status:</strong>
+                  <strong>状态：</strong>
                   <ul className="text-sm space-y-1 mt-1">
-                    <li>Enabled: {status.disguise.enabled ? '✅' : '❌'}</li>
+                    <li>已启用: {status.disguise.enabled ? '✅' : '❌'}</li>
                   </ul>
                 </div>
                 <div>
-                  <strong>Resources:</strong>
+                  <strong>资源：</strong>
                   <ul className="text-sm space-y-1 mt-1">
-                    <li>Templates: {status.disguise.templates}</li>
-                    <li>Phrases: {status.disguise.phrases}</li>
+                    <li>模板数: {status.disguise.templates}</li>
+                    <li>短语数: {status.disguise.phrases}</li>
                   </ul>
                 </div>
               </div>
