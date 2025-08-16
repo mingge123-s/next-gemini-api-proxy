@@ -17,13 +17,6 @@ const nextConfig: NextConfig = {
   output: process.env.VERCEL_ENV ? 'standalone' : undefined,
   poweredByHeader: false,
   compress: true,
-  // API routes optimization
-  api: {
-    bodyParser: {
-      sizeLimit: '10mb',
-    },
-    responseLimit: '50mb',
-  },
   // Headers for CORS and security
   async headers() {
     return [
