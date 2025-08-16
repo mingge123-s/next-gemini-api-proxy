@@ -207,13 +207,15 @@ class GeminiKeyManager {
     const totalKeys = this.keys.length;
     const validKeys = this.getValidKeys().length;
     const invalidKeys = totalKeys - validKeys;
+    const lastValidated = this.keys.length > 0 ? Math.max(...this.keys.map(k => k.lastChecked)) : null;
     
     return {
       total: totalKeys,
       valid: validKeys,
       invalid: invalidKeys,
+      lastValidated: lastValidated && lastValidated > 0 ? new Date(lastValidated).toISOString() : null,
       keys: this.keys.map(keyInfo => ({
-        key: keyInfo.key.substring(0, 8) + '...',
+        key: keyInfo.key.substring(0, 12) + '...',
         isValid: keyInfo.isValid,
         errorCount: keyInfo.errorCount,
         lastChecked: keyInfo.lastChecked,
@@ -243,6 +245,85 @@ class GeminiKeyManager {
    */
   public getValidKeysList(): string[] {
     return this.getValidKeys().map(keyInfo => keyInfo.key);
+  }
+
+  /**
+   * Add a new API key to the manager
+   */
+  public addKey(key: string): { success: boolean; message?: string } {
+    // Validate key format
+    if (!key || typeof key !== 'string') {
+      return { success: false, message: 'API 密钥格式无效' };
+    }
+
+    const trimmedKey = key.trim();
+    if (!trimmedKey.startsWith('AIza') || trimmedKey.length < 30) {
+      return { success: false, message: 'API 密钥格式无效，必须以 AIza 开头且长度足够' };
+    }
+
+    // Check if key already exists
+    if (this.keys.some(k => k.key === trimmedKey)) {
+      return { success: false, message: 'API 密钥已存在' };
+    }
+
+    // Add the key
+    this.keys.push({
+      key: trimmedKey,
+      isValid: true,
+      lastChecked: 0,
+      errorCount: 0,
+    });
+
+    console.log(`✅ Added new API key ending in ${trimmedKey.slice(-6)}`);
+    return { success: true };
+  }
+
+  /**
+   * Remove an API key from the manager
+   */
+  public removeKey(key: string): { success: boolean; message?: string } {
+    if (!key || typeof key !== 'string') {
+      return { success: false, message: 'API 密钥无效' };
+    }
+
+    // Find key by exact match or partial match (last 6 characters)
+    const keyIndex = this.keys.findIndex(k => {
+      return k.key === key || k.key.endsWith(key.slice(-6)) || key.endsWith(k.key.slice(-6));
+    });
+    
+    if (keyIndex === -1) {
+      return { success: false, message: 'API 密钥未找到' };
+    }
+
+    // Don't allow removing the last valid key
+    const validKeys = this.getValidKeys();
+    if (validKeys.length === 1 && validKeys[0].key === this.keys[keyIndex].key) {
+      return { success: false, message: '不能删除最后一个有效的 API 密钥' };
+    }
+
+    const removedKey = this.keys[keyIndex];
+    this.keys.splice(keyIndex, 1);
+    
+    // Reset current index if needed
+    if (this.currentIndex >= this.keys.length) {
+      this.currentIndex = 0;
+    }
+    
+    console.log(`🗑️ Removed API key ending in ${removedKey.key.slice(-6)}`);
+    return { success: true };
+  }
+
+  /**
+   * Get all keys with their status (for admin dashboard)
+   */
+  public getAllKeys(): Array<{ key: string; isValid: boolean; lastChecked: number; errorCount: number; lastError?: string }> {
+    return this.keys.map(k => ({
+      key: k.key,
+      isValid: k.isValid,
+      lastChecked: k.lastChecked,
+      errorCount: k.errorCount,
+      lastError: k.lastError
+    }));
   }
 }
 
